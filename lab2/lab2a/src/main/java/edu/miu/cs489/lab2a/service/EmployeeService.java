@@ -2,12 +2,14 @@ package edu.miu.cs489.lab2a.service;
 
 import edu.miu.cs489.lab2a.model.Employee;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Comparator;
 import java.util.List;
 
 public class EmployeeService {
+    private static final BigDecimal MIN_ELIGIBLE_SALARY = new BigDecimal("100000.00");
 
     public List<Employee> getAllEmployeesSorted(List<Employee> employees) {
         return employees.stream()
@@ -23,8 +25,9 @@ public class EmployeeService {
 
         return employees.stream()
                 .filter(employee -> !employee.hasPensionPlan())
+                .filter(employee -> employee.getYearlySalary().compareTo(MIN_ELIGIBLE_SALARY) >= 0)
                 .filter(employee -> {
-                    LocalDate eligibilityDate = employee.getEmploymentDate().plusYears(3);
+                    LocalDate eligibilityDate = employee.getEmploymentDate().plusYears(1);
                     return !eligibilityDate.isBefore(nextQuarterStart) && !eligibilityDate.isAfter(nextQuarterEnd);
                 })
                 .sorted(Comparator.comparing(Employee::getEmploymentDate).reversed())
