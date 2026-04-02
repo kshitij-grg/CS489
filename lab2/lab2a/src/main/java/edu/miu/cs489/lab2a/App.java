@@ -34,11 +34,15 @@ public class App {
                         System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(allEmployees));
                     }
                     case "2" -> {
-                        var report = employeeService.getQuarterlyUpcomingEnrollees(employees, LocalDate.now());
+                        var report = employeeService.getCurrentQuarterEnrollees(employees, LocalDate.now());
+                        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(report));
+                    }
+                    case "3" -> {
+                        var report = employeeService.getNextQuarterUpcomingEnrollees(employees, LocalDate.now());
                         System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(report));
                     }
                     case "0" -> running = false;
-                    default -> System.out.println("Invalid option. Please choose 0, 1, or 2.");
+                    default -> System.out.println("Invalid option. Please choose 0, 1, 2, or 3.");
                 }
             } catch (Exception e) {
                 System.out.println("Error while processing request: " + e.getMessage());
@@ -56,7 +60,8 @@ public class App {
     private static void printMenu() {
         System.out.println("================ Employee Pension CLI ================");
         System.out.println("1. Print all employees in JSON (sorted)");
-        System.out.println("2. Print Quarterly Upcoming Enrollees report in JSON");
+        System.out.println("2. Print Current Quarterly Enrollees report in JSON");
+        System.out.println("3. Print Next Quarterly Upcoming Enrollees report in JSON");
         System.out.println("0. Exit");
         System.out.print("Select an option: ");
     }

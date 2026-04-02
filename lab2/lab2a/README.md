@@ -18,13 +18,18 @@ This module implements a Java CLI application for managing Employee and Pension 
 
 ## Features
 
-1. Print all employees as JSON  
+1. Print all employees as JSON
    - Sorted by yearly salary (descending), then last name (ascending)
-2. Print quarterly upcoming enrollees report as JSON  
+2. Print current quarterly enrollees report as JSON
    - Employees without pension plan
    - Minimum salary: 100,000.00
    - Eligibility based on 1-year employment rule
    - Sorted by employment date (descending)
+3. Print next quarterly upcoming enrollees report as JSON
+   - Employees without pension plan
+   - Minimum salary: 100,000.00
+   - Eligibility based on 1-year employment rule
+   - Sorted by employment date (descending), then yearly salary (ascending)
 
 ## Run Locally
 

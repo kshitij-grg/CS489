@@ -19,31 +19,43 @@ public class EmployeeService {
                 .toList();
     }
 
-    public List<Employee> getQuarterlyUpcomingEnrollees(List<Employee> employees, LocalDate today) {
-        LocalDate nextQuarterStart = getNextQuarterStart(today);
-        LocalDate nextQuarterEnd = nextQuarterStart.plusMonths(3).minusDays(1);
+    public List<Employee> getCurrentQuarterEnrollees(List<Employee> employees, LocalDate today) {
+        return getQuarterlyEnrollees(employees, today, 0, Comparator.comparing(Employee::getEmploymentDate).reversed());
+    }
+
+    public List<Employee> getNextQuarterUpcomingEnrollees(List<Employee> employees, LocalDate today) {
+        return getQuarterlyEnrollees(
+                employees,
+                today,
+                1,
+                Comparator.comparing(Employee::getEmploymentDate).reversed()
+                        .thenComparing(Employee::getYearlySalary)
+        );
+    }
+
+    private List<Employee> getQuarterlyEnrollees(List<Employee> employees,
+                                                 LocalDate today,
+                                                 int quarterOffset,
+                                                 Comparator<Employee> comparator) {
+        LocalDate quarterStart = getQuarterStart(today, quarterOffset);
+        LocalDate quarterEnd = quarterStart.plusMonths(3).minusDays(1);
 
         return employees.stream()
                 .filter(employee -> !employee.hasPensionPlan())
                 .filter(employee -> employee.getYearlySalary().compareTo(MIN_ELIGIBLE_SALARY) >= 0)
                 .filter(employee -> {
                     LocalDate eligibilityDate = employee.getEmploymentDate().plusYears(1);
-                    return !eligibilityDate.isBefore(nextQuarterStart) && !eligibilityDate.isAfter(nextQuarterEnd);
+                    return !eligibilityDate.isBefore(quarterStart) && !eligibilityDate.isAfter(quarterEnd);
                 })
-                .sorted(Comparator.comparing(Employee::getEmploymentDate).reversed())
+                .sorted(comparator)
                 .toList();
     }
 
-    private LocalDate getNextQuarterStart(LocalDate date) {
-        int month = date.getMonthValue();
-        int currentQuarterStartMonth = ((month - 1) / 3) * 3 + 1;
-        Month nextQuarterMonth = Month.of(currentQuarterStartMonth).plus(3);
-        int year = date.getYear();
+    private LocalDate getQuarterStart(LocalDate date, int quarterOffset) {
+        int quarterStartMonth = ((date.getMonthValue() - 1) / 3) * 3 + 1 + (quarterOffset * 3);
+        int year = date.getYear() + (quarterStartMonth - 1) / 12;
+        int month = ((quarterStartMonth - 1) % 12) + 1;
 
-        if (nextQuarterMonth.getValue() <= currentQuarterStartMonth) {
-            year += 1;
-        }
-
-        return LocalDate.of(year, nextQuarterMonth, 1);
+        return LocalDate.of(year, month, 1);
     }
 }
