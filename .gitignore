@@ -3,3 +3,4 @@
 *.pdf
 *.puml
 out/
+*.drawio
