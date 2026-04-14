@@ -1,0 +1,43 @@
+# ADS GraphQL Schema
+
+type Address {
+    addressId: ID
+    street: String
+    city: String
+    state: String
+    zipCode: String
+}
+
+type Patient {
+    patientId: ID
+    patientNo: String
+    firstName: String
+    lastName: String
+    address: Address
+}
+
+input NewAddress {
+    street: String!
+    city: String!
+    state: String!
+    zipCode: String!
+}
+
+input NewPatient {
+    patientNo: String!
+    firstName: String!
+    lastName: String!
+    primaryAddress: NewAddress!
+}
+
+type Query {
+    allPatients: [Patient!]!
+    patientById(patientId: ID!): Patient
+    searchPatients(searchString: String!): [Patient!]!
+}
+
+type Mutation {
+    addNewPatient(newPatient: NewPatient!): Patient
+    updatePatient(patientId: ID!, newPatient: NewPatient!): Patient
+    deletePatient(patientId: ID!): String
+}
