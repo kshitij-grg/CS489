@@ -1,0 +1,271 @@
+{
+  "info": {
+    "_postman_id": "ae522a00-5605-4fc9-a1f7-410bc11829c5",
+    "name": "ADS Dental Surgery Web API",
+    "description": "Lab 9 - JWT secured RESTful Web API for ADS Dental Surgery Appointment Management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "14292653"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "0. Authenticate (Get JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "let token = pm.response.text().trim();",
+              "if (token.startsWith('\\\"') && token.endsWith('\\\"')) {",
+              "  token = token.slice(1, -1);",
+              "}",
+              "pm.collectionVariables.set('jwt_token', token);",
+              "",
+              "pm.test(\"JWT token captured\", function () {",
+              "  pm.expect(token).to.be.a('string').and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/service/public/authenticate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "service",
+            "public",
+            "authenticate"
+          ]
+        },
+        "description": "Authenticate and store JWT in collection variable jwt_token"
+      },
+      "response": []
+    },
+    {
+      "name": "1. Get All Patients",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/patients",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "patients"
+          ]
+        },
+        "description": "Retrieve all patients sorted by lastName in ascending order"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Get Patient by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/patients/{{patient_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "patients",
+            "{{patient_id}}"
+          ]
+        },
+        "description": "Retrieve a specific patient by ID including their primary address"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Create New Patient",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientNo\": \"P999\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"primaryAddress\": {\n    \"street\": \"123 Main Street\",\n    \"city\": \"Springfield\",\n    \"state\": \"IL\",\n    \"zipCode\": \"62701\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/patients",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "patients"
+          ]
+        },
+        "description": "Register a new patient in the system"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Update Patient",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientNo\": \"P100-UPD\",\n  \"firstName\": \"Gillian\",\n  \"lastName\": \"White-Updated\",\n  \"primaryAddress\": {\n    \"street\": \"123 Main St Updated\",\n    \"city\": \"Springfield\",\n    \"state\": \"IL\",\n    \"zipCode\": \"62701\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/patient/{{patient_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "patient",
+            "{{patient_id}}"
+          ]
+        },
+        "description": "Update patient information by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Delete Patient",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/patient/{{patient_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "patient",
+            "{{patient_id}}"
+          ]
+        },
+        "description": "Delete a patient by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Search Patients",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/patient/search/white",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "patient",
+            "search",
+            "white"
+          ]
+        },
+        "description": "Search patients by name or address"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Get All Addresses",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/adsweb/api/v1/addresses",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "adsweb",
+            "api",
+            "v1",
+            "addresses"
+          ]
+        },
+        "description": "Retrieve all addresses sorted by city with patient information"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "username",
+      "value": "admin"
+    },
+    {
+      "key": "password",
+      "value": "password123"
+    },
+    {
+      "key": "jwt_token",
+      "value": ""
+    },
+    {
+      "key": "patient_id",
+      "value": "1"
+    }
+  ]
+}
